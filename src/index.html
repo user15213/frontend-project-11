@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RSS Feed Form</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Add RSS Feed</h1>
+      <form id="rss-form">
+        <label for="rss-url">RSS Feed URL:</label>
+        <input
+          type="text"
+          id="rss-url"
+          name="rss-url"
+          placeholder="Enter RSS feed URL"
+          required
+        />
+        <button type="submit">Add RSS</button>
+      </form>
+      <div id="rss-list">
+        <h2>Your RSS Feeds</h2>
+        <ul id="feed-list">
+          <!-- Сюда будут добавляться RSS ссылки -->
+        </ul>
+      </div>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
