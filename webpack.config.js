@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js', // Главный файл вашего проекта
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
@@ -9,11 +9,11 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/, // Для обработки CSS
+        test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.scss$/, // Для обработки SCSS
+        test: /\.scss$/,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
     ],
