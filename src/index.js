@@ -8,7 +8,6 @@ export function rssForm() {
 
   rssForm.addEventListener('submit', (e) => {
     e.preventDefault();
-
     const rssUrl = rssUrlInput.value.trim();
 
     validateUrl(rssUrl)
@@ -33,6 +32,7 @@ export function rssForm() {
         rssUrlInput.value = '';
         feedbackMessage.classList.add('sr-only');
         rssUrlInput.classList.remove('is-invalid');
+        rssUrlInput.focus();
       })
       .catch((error) => {
         feedbackMessage.classList.remove('sr-only');
