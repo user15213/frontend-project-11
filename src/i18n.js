@@ -1,15 +1,17 @@
 import i18next from 'i18next';
 
 i18next.init({
-  lng: 'ru', // Задаем язык по умолчанию
+  lng: 'ru',
   resources: {
     ru: {
       translation: {
-        'rss-form': {
-          'url-error': 'Ссылка должна быть валидным URL',
-          'duplicate-url': 'Этот RSS-фид уже добавлен',
-          'fetch-error': 'Ошибка при загрузке RSS-потока',
-        },
+        rss_added: 'RSS успешно добавлен',
+        rss_exists: 'RSS уже существует',
+        empty_field: 'Не должно быть пустым',
+        invalid_url: 'Ссылка должна быть валидным URL',
+        invalid_rss: 'Ресурс не содержит валидный RSS',
+        network_error: 'Ошибка сети',
+        preview: 'Просмотр',
       },
     },
   },

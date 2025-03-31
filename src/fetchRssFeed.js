@@ -1,26 +1,27 @@
-export function fetchRssFeed() {
-  const feedUrls = ['https://example.com/rss']; // Список RSS фидов
-  const posts = [];
+import axios from 'axios';
+import DOMParser from 'dom-parser';
 
-  feedUrls.forEach((url) => {
-    fetch(url)
-      .then((response) => response.text())
-      .then((data) => {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(data, 'text/xml');
-        const items = xmlDoc.querySelectorAll('item');
+const parser = new DOMParser();
 
-        items.forEach((item) => {
-          posts.push({
-            title: item.querySelector('title').textContent,
-            description: item.querySelector('description').textContent,
-            link: item.querySelector('link').textContent,
-            isRead: false, // Новые посты не прочитаны
-          });
+export function fetchRssFeed(url) {
+  return axios
+    .get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
+    .then((response) => {
+      const xmlDoc = parser.parseFromString(response.data.contents, 'text/xml');
+      const items = xmlDoc.getElementsByTagName('item');
+      const posts = [];
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        posts.push({
+          title: item.getElementsByTagName('title')[0].textContent,
+          description: item.getElementsByTagName('description')[0].textContent,
+          link: item.getElementsByTagName('link')[0].textContent,
         });
-
-        renderPostList(posts);
-      })
-      .catch((error) => console.error('Ошибка загрузки фида', error));
-  });
+      }
+      return posts;
+    })
+    .catch((err) => {
+      throw new Error('Network error');
+    });
 }
