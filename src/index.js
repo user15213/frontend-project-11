@@ -1,14 +1,7 @@
-// index.js
+import './styles.scss';
+import 'bootstrap';
+import { rssForm } from './rssForm';
 
-// Импортируем необходимые файлы для работы
-import './styles.scss'; // Для стилей
-import 'bootstrap'; // Для Bootstrap
-import { rssForm } from './rssForm'; // Импортируем основной файл с логикой формы
-
-// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-  // Здесь можно поместить код, который должен выполниться сразу после загрузки страницы
-
-  // Инициализация формы
-  rssForm(); // Вызов функции, которая работает с формой (вызывается при загрузке)
+  rssForm();
 });
