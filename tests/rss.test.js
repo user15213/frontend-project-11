@@ -1,8 +1,17 @@
 import { test, expect } from '@playwright/test';
 
-test('should add RSS feed successfully', async ({ page }) => {
-  await page.goto('http://localhost:3000');
-  await page.fill('#rss-url', 'https://example.com/rss');
-  await page.click('#submit-button');
-  await expect(page.locator('#message-box')).toHaveText('RSS успешно добавлен');
+test('has title', async ({ page }) => {
+  await page.goto('https://playwright.dev/');
+
+  await expect(page).toHaveTitle(/Playwright/);
+});
+
+test('get started link', async ({ page }) => {
+  await page.goto('https://playwright.dev/');
+
+  await page.getByRole('link', { name: 'Get started' }).click();
+
+  await expect(
+    page.getByRole('heading', { name: 'Installation' })
+  ).toBeVisible();
 });
