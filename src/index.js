@@ -1,4 +1,13 @@
 import { validateUrl } from './schema';
+import './styles.scss';
+import 'bootstrap';
+import { rssForm } from './rssForm';
+import i18next from './i18n';
+
+document.addEventListener('DOMContentLoaded', () => {
+  i18next.changeLanguage('ru'); // Задание языка (можно динамически менять)
+  rssForm();
+});
 
 export function rssForm() {
   const rssForm = document.getElementById('rss-form');

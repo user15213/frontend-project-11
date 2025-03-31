@@ -1,8 +1,9 @@
 import { validateUrl } from './schema';
+import i18next from './i18n';
 
 export function rssForm() {
   const rssForm = document.getElementById('rss-form');
-  const rssUrlInput = document.getElementById('url-input');
+  const rssUrlInput = document.getElementById('rss-url');
   const feedList = document.getElementById('feed-list');
   const feedbackMessage = document.querySelector('.feedback');
 
@@ -17,7 +18,7 @@ export function rssForm() {
           (link) => link.href
         );
         if (existingUrls.includes(rssUrl)) {
-          alert('Этот RSS-фид уже добавлен');
+          alert(i18next.t('rss-form.duplicate-error'));
           return;
         }
 
