@@ -5,7 +5,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 export default {
-  mode: process.env.NODE_ENV || 'development',
+  mode: 'production',
   module: {
     rules: [
       {
