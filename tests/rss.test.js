@@ -9,7 +9,9 @@ test('has title', async ({ page }) => {
 test('get started link', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
-  await page.getByRole('link', { name: 'Get started' }).click();
+  const link = page.getByRole('link', { name: 'Get started' });
+  await expect(link).toBeVisible();
+  await link.click();
 
   await expect(
     page.getByRole('heading', { name: 'Installation' })
