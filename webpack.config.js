@@ -32,18 +32,18 @@ export default {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'index.html', // Ваш исходный файл HTML
-      inject: true, // Вставка в HTML
+      template: 'index.html',
+      inject: true,
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css', // Указываем хэш
+      filename: '[name].[contenthash].css',
     }),
   ],
   output: {
     clean: true,
-    path: path.resolve(__dirname, 'dist'), // Путь для сборки
-    filename: '[name].[contenthash].js', // Имя JS файла
-    publicPath: '', // Абсолютный путь
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].[contenthash].js',
+    publicPath: '',
   },
   devServer: {
     static: path.join(__dirname, 'dist'),
@@ -51,5 +51,8 @@ export default {
     port: 9000,
     open: true,
     hot: true,
+    client: {
+      overlay: false,
+    },
   },
 };
