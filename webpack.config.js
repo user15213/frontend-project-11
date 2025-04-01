@@ -37,12 +37,14 @@ export default {
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
+      publicPath: '/',
     }),
   ],
   output: {
     clean: true,
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[contenthash].js',
+    publicPath: '/',
   },
   devServer: {
     static: path.join(__dirname, 'dist'),
