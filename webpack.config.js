@@ -33,7 +33,7 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'index.html',
-      inject: 'head',
+      inject: true,
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
