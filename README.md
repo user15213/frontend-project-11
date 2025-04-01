@@ -19,6 +19,18 @@
 
 [**RSS Агрегатор - Демо**](https://frontend-project-11-fawn-delta.vercel.app/)
 
+## Установка
+
+Клонируйте репозиторий:
+
+git clone https://github.com/user15213/frontend-project-11.git
+
+    npm install
+    npm run build
+    npm run start
+
+Это откроет проект в локальном сервере на http://localhost:9000.
+
 ## Статус тестов и линтера
 
 Статус тестов и линтера:
