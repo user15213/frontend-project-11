@@ -5,7 +5,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 export default {
-  mode: 'production',
+  mode: process.env.NODE_ENV || 'production',
   module: {
     rules: [
       {
@@ -37,14 +37,12 @@ export default {
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
-      publicPath: '/',
     }),
   ],
   output: {
     clean: true,
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[contenthash].js',
-    publicPath: '/',
   },
   devServer: {
     static: path.join(__dirname, 'dist'),
