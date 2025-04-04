@@ -9,12 +9,9 @@ import parseRSS from './utils/parser.js';
 
 const getAllOriginsResponse = (url) => {
   const allOriginsLink = 'https://allorigins.hexlet.app/get';
-
   const workingUrl = new URL(allOriginsLink);
-
   workingUrl.searchParams.set('disableCache', 'true');
   workingUrl.searchParams.set('url', url);
-
   return axios.get(workingUrl);
 };
 
