@@ -15,44 +15,36 @@ const getAllOriginsResponse = (url) => {
   return axios.get(workingUrl);
 };
 
-const getHttpContents = (url) => {
-  return getAllOriginsResponse(url)
-    .then((response) => {
-      if (!response.data || !response.data.contents) {
-        throw new Error('InvalidResponse');
-      }
-      return response.data.contents;
-    })
-    .catch((error) => {
-      console.error('Error fetching HTTP contents:', error);
-      throw new Error('networkError', { cause: error });
-    });
-};
+const getHttpContents = (url) => getAllOriginsResponse(url)
+  .then((response) => {
+    if (!response.data || !response.data.contents) {
+      throw new Error('InvalidResponse');
+    }
+    return response.data.contents;
+  })
+  .catch((error) => {
+    console.error('Error fetching HTTP contents:', error);
+    throw new Error('networkError', { cause: error });
+  });
 
 const addPosts = (feedId, items, state) => {
-  const posts = items.map((item) => {
-    return {
-      feedId,
-      id: uniqueId(),
-      ...item,
-    };
-  });
+  const posts = items.map((item) => ({
+    feedId,
+    id: uniqueId(),
+    ...item,
+  }));
 
   state.posts = posts.concat(state.posts);
 };
 
 const trackUpdates = (state, timeout = 5000) => {
   const inner = () => {
-    const promises = state.feeds.map((feed) => {
-      return getHttpContents(feed.link)
-        .then((data) => {
-          const parsedRSS = parseRSS(data);
-          return parsedRSS;
-        })
-        .catch((error) => {
-          return { error };
-        });
-    });
+    const promises = state.feeds.map((feed) => getHttpContents(feed.link)
+      .then((data) => {
+        const parsedRSS = parseRSS(data);
+        return parsedRSS;
+      })
+      .catch((error) => ({ error })));
 
     Promise.allSettled(promises)
       .then((results) => {
@@ -66,7 +58,7 @@ const trackUpdates = (state, timeout = 5000) => {
             .filter((post) => feedId === post.feedId)
             .map(({ link }) => link);
           const newItems = parsedRSS.items.filter(
-            ({ link }) => !postsUrls.includes(link)
+            ({ link }) => !postsUrls.includes(link),
           );
           if (newItems.length > 0) {
             addPosts(feedId, newItems, state);
@@ -133,7 +125,7 @@ export default () => {
 
       const state = onChange(
         initialState,
-        render(elements, initialState, i18nInstance)
+        render(elements, initialState, i18nInstance),
       );
 
       trackUpdates(state);
@@ -149,9 +141,7 @@ export default () => {
 
         schema
           .validate(state.form.url)
-          .then(() => {
-            return getHttpContents(state.form.url);
-          })
+          .then(() => getHttpContents(state.form.url))
           .then((data) => {
             const parsedRSS = parseRSS(data);
             return parsedRSS;
