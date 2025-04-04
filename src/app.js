@@ -42,9 +42,16 @@ const trackUpdates = (feedIds, state, timeout = 5000) => {
   const inner = () => {
     const promises = state.feeds.map((feed) =>
       getHttpContents(feed.link)
-        .then(parseRSS)
+        .then((responseData) => {
+          const parsedRSS = parseRSS(responseData);
+          if (!parsedRSS || !parsedRSS.items) {
+            console.error(`Error parsing RSS feed for feedId ${feed.id}`);
+            return { error: 'Invalid RSS format' };
+          }
+          return parsedRSS;
+        })
         .catch((error) => {
-          console.error('Error fetching and parsing RSS feed:', error);
+          console.error('Error fetching or parsing RSS feed:', error);
           return { error };
         })
     );
@@ -52,10 +59,13 @@ const trackUpdates = (feedIds, state, timeout = 5000) => {
     Promise.allSettled(promises)
       .then((results) =>
         results.forEach((result, index) => {
-          const parsedRSS = result.status === 'fulfilled' ? result.value : null;
-          const feedId = state.feeds[index].id;
+          if (result.status === 'rejected' || result.value.error) {
+            console.error(`Error processing feedId ${state.feeds[index].id}`);
+            return;
+          }
 
-          if (!parsedRSS) return;
+          const parsedRSS = result.value;
+          const feedId = state.feeds[index].id;
 
           const postsUrls = state.posts
             .filter((post) => feedId === post.feedId)
@@ -69,7 +79,7 @@ const trackUpdates = (feedIds, state, timeout = 5000) => {
           }
         })
       )
-      .catch((error) => console.error(error))
+      .catch((error) => console.error('Error handling updates:', error))
       .then(() => setTimeout(inner, timeout));
   };
   setTimeout(inner, timeout);
@@ -136,6 +146,8 @@ export default () => {
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        state.form.state = 'sending';
+
         state.form.error = '';
 
         const urlsList = state.feeds.map(({ link }) => link);
@@ -145,8 +157,6 @@ export default () => {
         schema
           .validate(state.form.url)
           .then(() => {
-            state.form.state = 'sending';
-
             return getHttpContents(state.form.url);
           })
           .then(parseRSS)
