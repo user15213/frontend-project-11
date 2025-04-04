@@ -15,8 +15,8 @@ const getAllOriginsResponse = (url) => {
   return axios.get(workingUrl);
 };
 
-const getHttpContents = (url) =>
-  getAllOriginsResponse(url)
+const getHttpContents = (url) => {
+  return getAllOriginsResponse(url)
     .then((response) => {
       if (!response.data || !response.data.contents) {
         throw new Error('InvalidResponse');
@@ -27,33 +27,41 @@ const getHttpContents = (url) =>
       console.error('Error fetching HTTP contents:', error);
       throw new Error('networkError', { cause: error });
     });
+};
 
 const addPosts = (feedId, items, state) => {
-  const posts = items.map((item) => ({
-    feedId,
-    id: uniqueId(),
-    ...item,
-  }));
+  const posts = items.map((item) => {
+    return {
+      feedId,
+      id: uniqueId(),
+      ...item,
+    };
+  });
+
   state.posts = posts.concat(state.posts);
 };
 
 const trackUpdates = (state, timeout = 5000) => {
   const inner = () => {
-    const promises = state.feeds.map((feed) =>
-      getHttpContents(feed.link)
+    const promises = state.feeds.map((feed) => {
+      return getHttpContents(feed.link)
         .then((data) => {
           const parsedRSS = parseRSS(data);
           return parsedRSS;
         })
-        .catch((error) => ({ error }))
-    );
+        .catch((error) => {
+          return { error };
+        });
+    });
 
     Promise.allSettled(promises)
       .then((results) => {
         results.forEach((result, index) => {
           const parsedRSS = result.status === 'fulfilled' ? result.value : null;
           const feedId = state.feeds[index].id;
-          if (!parsedRSS) return;
+          if (!parsedRSS) {
+            return;
+          }
           const postsUrls = state.posts
             .filter((post) => feedId === post.feedId)
             .map(({ link }) => link);
@@ -65,8 +73,12 @@ const trackUpdates = (state, timeout = 5000) => {
           }
         });
       })
-      .catch((error) => console.error(error))
-      .then(() => setTimeout(inner, timeout));
+      .catch((error) => {
+        console.error(error);
+      })
+      .then(() => {
+        setTimeout(inner, timeout);
+      });
   };
   setTimeout(inner, timeout);
 };
@@ -130,7 +142,6 @@ export default () => {
         e.preventDefault();
 
         state.form.error = '';
-
         state.form.state = 'sending';
 
         const urlsList = state.feeds.map(({ link }) => link);
@@ -138,7 +149,9 @@ export default () => {
 
         schema
           .validate(state.form.url)
-          .then(() => getHttpContents(state.form.url))
+          .then(() => {
+            return getHttpContents(state.form.url);
+          })
           .then((data) => {
             const parsedRSS = parseRSS(data);
             return parsedRSS;
@@ -172,9 +185,12 @@ export default () => {
       elements.modal.modalElement.addEventListener('show.bs.modal', (e) => {
         const postId = e.relatedTarget.getAttribute('data-id');
         const post = state.posts.find(({ id }) => postId === id);
-        if (!post) return;
+        if (!post) {
+          return;
+        }
         const { title, description, link } = post;
         state.seenIds.add(postId);
+
         state.modal = { title, description, link };
       });
     });
