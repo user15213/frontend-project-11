@@ -18,15 +18,14 @@ const getAllOriginsResponse = (url) => {
   return axios.get(workingUrl);
 };
 
-const getHttpContents = (url) =>
-  getAllOriginsResponse(url)
-    .then((response) => {
-      const responseData = response.data.contents;
-      return responseData;
-    })
-    .catch(() => {
-      throw new Error('networkError');
-    });
+const getHttpContents = (url) => getAllOriginsResponse(url)
+  .then((response) => {
+    const responseData = response.data.contents;
+    return responseData;
+  })
+  .catch(() => {
+    throw new Error('networkError');
+  });
 
 const addPosts = (feedId, items, state) => {
   const posts = items.map((item) => ({
@@ -39,32 +38,28 @@ const addPosts = (feedId, items, state) => {
 
 const trackUpdates = (feedIds, state, timeout = 5000) => {
   const inner = () => {
-    const promises = state.feeds.map((feed) =>
-      getHttpContents(feed.link)
-        .then(parseRSS)
-        .catch((error) => ({ error }))
-    );
+    const promises = state.feeds.map((feed) => getHttpContents(feed.link)
+      .then(parseRSS)
+      .catch((error) => ({ error })));
 
     Promise.allSettled(promises)
-      .then((results) =>
-        results.forEach((result, index) => {
-          const parsedRSS = result.status === 'fulfilled' ? result.value : null;
-          const feedId = state.feeds[index].id;
+      .then((results) => results.forEach((result, index) => {
+        const parsedRSS = result.status === 'fulfilled' ? result.value : null;
+        const feedId = state.feeds[index].id;
 
-          if (!parsedRSS) return;
+        if (!parsedRSS) return;
 
-          const postsUrls = state.posts
-            .filter((post) => feedId === post.feedId)
-            .map(({ link }) => link);
-          const newItems = parsedRSS.items.filter(
-            ({ link }) => !postsUrls.includes(link)
-          );
+        const postsUrls = state.posts
+          .filter((post) => feedId === post.feedId)
+          .map(({ link }) => link);
+        const newItems = parsedRSS.items.filter(
+          ({ link }) => !postsUrls.includes(link),
+        );
 
-          if (newItems.length > 0) {
-            addPosts(feedId, newItems, state);
-          }
-        })
-      )
+        if (newItems.length > 0) {
+          addPosts(feedId, newItems, state);
+        }
+      }))
       .catch((error) => console.error(error))
       .then(() => setTimeout(inner, timeout));
   };
@@ -124,7 +119,7 @@ export default () => {
 
       const state = onChange(
         initialState,
-        render(elements, initialState, i18nInstance)
+        render(elements, initialState, i18nInstance),
       );
 
       trackUpdates(state.feeds, state);
