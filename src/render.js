@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 const buildElement = (tagName, options = {}) => {
   const element = document.createElement(tagName);
   const { style, textContent } = options;
