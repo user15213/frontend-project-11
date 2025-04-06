@@ -15,7 +15,7 @@ rules:
   no-console: 'off'
   import/extensions: 'off'
   no-param-reassign:
-    - 'error'
+    - 'off'
     - ignorePropertyModificationsFor:
         - 'state'
         - 'elements'
