@@ -32,33 +32,33 @@ const buildContainer = (title, listElems) => {
   return cardBorder;
 };
 
-const handleFormState = (elements, formState, i18nInstance) => {
+const handleFormState = ({ submit, input }, formState, i18nInstance) => {
   switch (formState) {
     case 'filling':
-      elements.submit.disabled = false;
-      elements.submit.textContent = i18nInstance.t('form.submit');
-      elements.input.focus();
+      submit.disabled = false;
+      submit.textContent = i18nInstance.t('form.submit');
+      input.focus();
       break;
     case 'sending':
-      elements.submit.disabled = true;
-      elements.submit.textContent = i18nInstance.t('form.loading');
+      submit.disabled = true;
+      submit.textContent = i18nInstance.t('form.loading');
       break;
     default:
       throw new Error(`Unexpected form state: ${formState}`);
   }
 };
 
-const handleErrors = (elements, error, i18nInstance) => {
-  elements.feedback.classList.remove('text-success');
-  elements.feedback.classList.add('text-danger');
+const handleErrors = ({ input, feedback }, error, i18nInstance) => {
+  feedback.classList.remove('text-success');
+  feedback.classList.add('text-danger');
   if (error === '') {
-    elements.input.classList.remove('is-invalid');
-    elements.feedback.textContent = '';
+    input.classList.remove('is-invalid');
+    feedback.textContent = '';
     return;
   }
-  elements.input.classList.add('is-invalid');
-  elements.feedback.textContent = i18nInstance.t(`errors.${error}`);
-  elements.input.focus();
+  input.classList.add('is-invalid');
+  feedback.textContent = i18nInstance.t(`errors.${error}`);
+  input.focus();
 };
 
 const handleFeeds = (container, feeds, i18nInstance) => {
@@ -118,33 +118,34 @@ const handlePosts = (container, posts, seenIds, i18nInstance) => {
 };
 
 export default (elements, state, i18nInstance) => {
+  const { input, submit, feedback, feeds, posts, modal } = elements;
   return (path, value) => {
     switch (path) {
       case 'form.url':
-        elements.input.value = value;
+        input.value = value;
         break;
       case 'form.state':
-        handleFormState(elements, value, i18nInstance);
+        handleFormState({ submit, input }, value, i18nInstance);
         break;
       case 'form.error':
-        handleErrors(elements, value, i18nInstance);
+        handleErrors({ input, feedback }, value, i18nInstance);
         break;
       case 'feeds':
-        elements.feedback.classList.remove('text-danger');
-        elements.feedback.classList.add('text-success');
-        elements.feedback.textContent = i18nInstance.t('success');
-        handleFeeds(elements.feeds, value, i18nInstance);
+        feedback.classList.remove('text-danger');
+        feedback.classList.add('text-success');
+        feedback.textContent = i18nInstance.t('success');
+        handleFeeds(feeds, value, i18nInstance);
         break;
       case 'posts':
-        handlePosts(elements.posts, value, state.seenIds, i18nInstance);
+        handlePosts(posts, value, state.seenIds, i18nInstance);
         break;
       case 'seenIds':
-        handlePosts(elements.posts, state.posts, state.seenIds, i18nInstance);
+        handlePosts(posts, state.posts, state.seenIds, i18nInstance);
         break;
       case 'modal':
-        elements.modal.title.textContent = value.title;
-        elements.modal.body.textContent = value.description;
-        elements.modal.showFull.href = value.link;
+        modal.title.textContent = value.title;
+        modal.body.textContent = value.description;
+        modal.showFull.href = value.link;
         break;
       default:
         throw new Error(`Unexpected state: ${path}`);
